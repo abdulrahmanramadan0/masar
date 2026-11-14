@@ -1,0 +1,16 @@
+{
+  "name": "مسار - مساعد طالب الهندسة المدنية",
+  "short_name": "مسار",
+  "description": "منصة أكاديمية لحساب المعدل التراكمي ومتابعة المحاضرات والوظائف لطلاب الهندسة المدنية - جامعة الرواد",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f3ea",
+  "theme_color": "#3f8f1f",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
