@@ -1,9 +1,9 @@
 /* مسار - Service Worker
    غيّر رقم الإصدار هنا عند كل نشر لتُحذف الكاشات القديمة تلقائياً. */
-const CACHE_NAME = 'masar-v8';
+const CACHE_NAME = 'masar-v9';
 
 /* ملفات التطبيق التي تُخزَّن مسبقاً للعمل دون إنترنت */
-const APP_FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const APP_FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './badge-96.png'];
 
 /* خوادم لا يتدخل فيها الـ Service Worker إطلاقاً (Firebase / Google) */
 const BYPASS_HOSTS = ['googleapis.com', 'firebaseio.com', 'gstatic.com', 'firebaseapp.com'];
@@ -78,7 +78,7 @@ self.addEventListener('push', (event) => {
   const opts = {
     body: String(d.body || '').slice(0, 300),
     icon: './icon-192.png',
-    badge: './icon-192.png',
+    badge: './badge-96.png',
     dir: 'rtl',
     lang: 'ar',
     vibrate: [200, 100, 200],
