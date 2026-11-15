@@ -1,6 +1,6 @@
 /* مسار - Service Worker
    غيّر رقم الإصدار هنا عند كل نشر لتُحذف الكاشات القديمة تلقائياً. */
-const CACHE_NAME = 'masar-v7';
+const CACHE_NAME = 'masar-v8';
 
 /* ملفات التطبيق التي تُخزَّن مسبقاً للعمل دون إنترنت */
 const APP_FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
@@ -81,6 +81,10 @@ self.addEventListener('push', (event) => {
     badge: './icon-192.png',
     dir: 'rtl',
     lang: 'ar',
+    vibrate: [200, 100, 200],
+    silent: false,
+    renotify: true,
+    tag: 'masar-' + Date.now(),
     data: { url: d.url || './' }
   };
   event.waitUntil(Promise.all([
