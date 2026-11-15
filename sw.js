@@ -1,6 +1,12 @@
 /* مسار - Service Worker
    غيّر رقم الإصدار هنا عند كل نشر لتُحذف الكاشات القديمة تلقائياً. */
-const CACHE_NAME = 'masar-v9';
+const CACHE_NAME = 'masar-v10';
+
+/* النطاق القديم (GitHub Pages): ينظّف نفسه ويحوّل كل شيء إلى النطاق الرسمي الجديد */
+const OLD_HOST = 'abdulrahmanramadan0.github.io';
+const NEW_ORIGIN = 'https://abdulrahmanramadan.me';
+const IS_OLD = self.location.hostname === OLD_HOST;
+const newUrl = (u) => { try { const x = new URL(u); return NEW_ORIGIN + x.pathname + x.search + x.hash; } catch (e) { return NEW_ORIGIN + '/masar/'; } };
 
 /* ملفات التطبيق التي تُخزَّن مسبقاً للعمل دون إنترنت */
 const APP_FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './badge-96.png'];
@@ -14,6 +20,7 @@ const keyFor = (url) => new Request(url.origin + url.pathname);
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
+  if (IS_OLD) return; /* لا تخزين مسبق على النطاق القديم */
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       Promise.all(
@@ -28,6 +35,18 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  if (IS_OLD) {
+    event.waitUntil((async () => {
+      try { const names = await caches.keys(); await Promise.all(names.map((n) => caches.delete(n))); } catch (e) {}
+      try { await self.clients.claim(); } catch (e) {}
+      try {
+        const cs = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        await Promise.all(cs.map((c) => c.navigate(newUrl(c.url)).catch(() => null)));
+      } catch (e) {}
+      try { await self.registration.unregister(); } catch (e) {}
+    })());
+    return;
+  }
   event.waitUntil(
     caches
       .keys()
@@ -38,6 +57,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+  if (IS_OLD) {
+    /* أي فتح للرابط القديم يُحوَّل مباشرة (بدل ERR_FAILED عند إعادة التوجيه عبر النطاقات) */
+    if (req.mode === 'navigate') {
+      event.respondWith(Response.redirect(newUrl(req.url), 302));
+      event.waitUntil(caches.keys().then((ns) => Promise.all(ns.map((n) => caches.delete(n)))).then(() => self.registration.unregister()).catch(() => {}));
+    }
+    return;
+  }
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
